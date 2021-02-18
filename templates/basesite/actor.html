@@ -22,16 +22,16 @@
                 <h5 class="editContent"></h5>
                 <ul>
                     <li>
-                        <span><b>Дата рождения:</b> {{ actor.age }}</span></li>
+                        <span><b>Возраст:</b> {{ actor.age }} лет</span></li>
                     <li>
-                                    <span><b>Режиссер:</b>
-                                        {% for movie in actor.movie.all %}
-                                            {{ movie.title }}
-                                        {% endfor %}
-                                    </span>
+                        <span><b>Режиссер:</b>
+                            {% for movie in actor.film_director.all %}
+                                  {{ movie.title }}
+                            {% endfor %}
+                        </span>
                     </li>
                     <li><span><b>Актер</b>
-                        {% for movie in actor.movie.all %}
+                        {% for movie in actor.film_actor.all %}
                             {{ movie.title }}
                         {% endfor %}
                     </span>
