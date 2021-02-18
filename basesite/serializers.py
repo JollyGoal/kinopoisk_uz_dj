@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Movie, Genre, MovieShots, VideoTrailer, AgeRate
+from .models import Movie, Genre, VideoTrailer, AgeRate, MovieShots
 
 
 class MovieListserializer(serializers.ModelSerializer):
@@ -12,11 +12,11 @@ class GenreSerializer(serializers.ModelSerializer):
     class Meta:
         model = Genre
         fields = ("name",)
-#
-# class MovieShotsSerializer(serializers.ModelSerializer):
-#     class Meta:
-#         model = MovieShots
-#         fields = ("image",)
+
+class MovieShotsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = MovieShots
+        fields = "__all__"
 
 class VideoSerializer(serializers.ModelSerializer):
     class Meta:
@@ -36,7 +36,10 @@ class MovieDetailSerializer(serializers.ModelSerializer):
     genres = GenreSerializer()
     trailer = VideoSerializer()
     age_rate = AgeRateSerializer()
-    # movie_shots = MovieShotsSerializers()
     class Meta:
         model = Movie
         exclude = ("draft",)
+        class Meta:
+            model = MovieShots
+            image = "get_image"
+
