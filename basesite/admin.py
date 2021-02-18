@@ -19,18 +19,37 @@ class CategoryAdmin(admin.ModelAdmin):
     list_display_links = 'name',
 
 
+class MovieShotsInLine(admin.StackedInline):
+    model = MovieShots
+    extra = 3
+    fields = ('title', 'description', ('image', "display_screenshots"),)
+    readonly_fields = ("display_screenshots",)
+
+    def display_screenshots(self, obj):
+        return mark_safe(f"<img src={obj.image.url} height='400'")
+
+    display_screenshots.short_description = 'Скриншот'
+
+
 @admin.register(Film)
 class FilmAdmin(admin.ModelAdmin):
-    list_display = ("title", "original_title", "id", 'display_poster', 'draft')
+    list_display = ("title", "original_title", "id", 'draft')
     save_on_top = True
     list_editable = 'draft',
     save_as = True
-    fields = (('category', 'genres',),)
+    fieldsets = [
+        (None, {'fields': ['title', 'original_title', 'tagline']}),
+        ('Постер', {'fields': [('poster', 'display_poster')]}),
+    ]
+    readonly_fields = ("display_poster",)
+    inlines = [MovieShotsInLine]
 
     def display_poster(self, obj):
-        return mark_safe(f"<img src={obj.poster.url} height='25'")
+        return mark_safe(f"<img src={obj.poster.url} height='400'")
 
-    display_poster.short_description = 'Изображение'
+    display_poster.short_description = 'Постер'
+
+
 
 
 @admin.register(Genre)
@@ -45,11 +64,6 @@ class CartoonAdmin(admin.ModelAdmin):
 
 @admin.register(Serial)
 class SerialAdmin(admin.ModelAdmin):
-    list_display = 'title',
-
-
-@admin.register(MovieShots)
-class MovieShotsAdmin(admin.ModelAdmin):
     list_display = 'title',
 
 
