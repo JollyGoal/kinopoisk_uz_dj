@@ -1,8 +1,9 @@
 from django.shortcuts import render, redirect
 from django.views.generic.base import View
 from django.views.generic import ListView, DetailView
-from .models import Movie, Category, Actor
+from .models import Movie, Actor
 from .forms import ReviewForm
+from .serializers import MovieListserializer, MovieDetailSerializer
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import permissions
@@ -19,7 +20,7 @@ class MoviesView(ListView):
     #     context["categories"] = Category.objects.all()
     #     return context
 
-class MovieDetailView(DetailView):
+class MovieDetailsView(DetailView):
     """ПОЛНОЕ ОПИСАНИЕ ФИЛЬМА"""
     model = Movie
     slug_field = "url"
@@ -50,19 +51,28 @@ class ActorView(DetailView):
 
 
 
-# class TestView(APIView):
-#
-#     def get(self, request, *args, **kwargs):
-#         qs = Movie.objects.all()
-#         movie = qs.first()
-#         serializer = MovieSerializer(movie)
-#         return Response(serializer.data)
-#
-#     def post(self, request, *args, **kwargs):
-#         serializer = MovieSerializer(data=request.data)
-#         if serializer.is_valid():
-#             serializer.save()
-#             return Response(serializer.data)
-#         return Response(serializer.errors)
+class MovieListView(APIView):
+
+    """вывод список фильмов"""
+
+    def get(self, request):
+        movie = Movie.objects.filter(draft=False)
+        serializer = MovieListserializer(movie, many=True)
+        return Response(serializer.data)
+
+class MovieDetailView(APIView):
+    def get(self, request, pk):
+        movie = Movie.objects.get(id=pk, draft=False)
+        serializer = MovieDetailSerializer(movie)
+        return Response(serializer.data)
+
+
+    def post(self, request, pk):
+        movie = Movie.objects.get(id=pk, draft=False)
+        serializer = MovieDetailSerializer(movie)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors)
 
 
