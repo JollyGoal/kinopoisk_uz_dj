@@ -3,7 +3,7 @@ from django.contrib import admin
 from django.utils.safestring import mark_safe
 # Local imports
 from .models import Category, Genre, MovieShots, Actor, Rating, Film, \
-    RatingStar, Reviews, VideoTrailer, Director, Scenario, Serial, Cartoon, AgeRate
+    RatingStar, Reviews, VideoTrailer, Serial, Cartoon, AgeRate
 
 
 # Admin site display settings
@@ -78,14 +78,14 @@ class VideoTrailerAdmin(admin.ModelAdmin):
     list_display = 'name',
 
 
-@admin.register(Director)
-class DirectorAdmin(admin.ModelAdmin):
-    list_display = 'name',
-
-
-@admin.register(Scenario)
-class ScenarioAdmin(admin.ModelAdmin):
-    list_display = 'name',
+# @admin.register(Director)
+# class DirectorAdmin(admin.ModelAdmin):
+#     list_display = 'name',
+#
+#
+# @admin.register(Scenario)
+# class ScenarioAdmin(admin.ModelAdmin):
+#     list_display = 'name',
 
 
 @admin.register(AgeRate)
