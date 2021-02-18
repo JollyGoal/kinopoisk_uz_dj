@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="3fcedb49-d55c-472f-81f1-2a8fb46c511b" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/kinopoisk_uz_dj/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/kinopoisk_uz_dj/urls.py" afterDir="false" />
-    </list>
+    <list default="true" id="3fcedb49-d55c-472f-81f1-2a8fb46c511b" name="Default Changelist" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -98,7 +96,7 @@
       <option name="presentableId" value="Default" />
       <updated>1613627256187</updated>
       <workItem from="1613627257771" duration="613000" />
-      <workItem from="1613629588080" duration="415000" />
+      <workItem from="1613629588080" duration="751000" />
     </task>
     <servers />
   </component>
