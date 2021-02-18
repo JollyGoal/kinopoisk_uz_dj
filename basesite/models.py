@@ -98,7 +98,7 @@ class Movie(models.Model):
     """Фильм"""
     title = models.CharField("Название", max_length=100)
     original_title = models.CharField("Оригинальное название фильма", max_length=100)
-    tagline = models.CharField("Слоган", max_length=100, blank=True)
+    tagline = models.CharField("Слоган", max_length=100, blank=True, null=True)
     description = models.TextField("Описание")
     poster = models.ImageField("Постер", upload_to="movies/")
     year = models.PositiveSmallIntegerField("Дата выхода", default=2021)
@@ -124,7 +124,7 @@ class Movie(models.Model):
     seasons = models.PositiveSmallIntegerField("Количество сезонов", blank=True, null=True)
     age_rate = models.ForeignKey(AgeRate, verbose_name="Возрастной рейтинг", on_delete=models.CASCADE)
     trailer = models.ForeignKey(VideoTrailer, verbose_name="Трейлер", on_delete=models.CASCADE, blank=True, null=True)
-    url = models.SlugField(max_length=160, unique=True)
+    url = models.SlugField(max_length=160, unique=True, blank=True)
     draft = models.BooleanField("Черновик", default=False)
 
     def __str__(self):
