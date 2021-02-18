@@ -18,7 +18,6 @@ class CategoryAdmin(admin.ModelAdmin):
     list_display = ("id", "url", "name")
     list_display_links = 'name',
 
-
 class MovieShotsInLine(admin.StackedInline):
     model = MovieShots
     extra = 3
