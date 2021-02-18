@@ -16,6 +16,7 @@ class Category(models.Model):
         verbose_name = "Категория"
         verbose_name_plural = "Категории"
 
+
 class AgeRate(models.Model):
     """ВОЗРАСТНОЙ РЕЙТИНГ"""
     name = models.CharField("Возрастной рейтинг", max_length=10)
@@ -26,6 +27,7 @@ class AgeRate(models.Model):
     class Meta:
         verbose_name = "Возрастной рейтинг"
         verbose_name_plural = "Возрастные рейтинги"
+
 
 class Actor(models.Model):
     """Актеры """
@@ -40,6 +42,7 @@ class Actor(models.Model):
     class Meta:
         verbose_name = "Актеры"
         verbose_name_plural = "Актеры"
+
 
 # class Director(models.Model):
 #     """Директоры """
@@ -70,10 +73,6 @@ class Actor(models.Model):
 #         verbose_name_plural = "Сценаристы"
 
 
-
-
-
-
 class Genre(models.Model):
     """Жанры"""
     name = models.CharField("Имя", max_length=100)
@@ -99,7 +98,6 @@ class VideoTrailer(models.Model):
     class Meta:
         verbose_name = "Трейлер"
         verbose_name_plural = "Трейлеры"
-
 
 
 class Movie(models.Model):
@@ -145,7 +143,6 @@ class Serial(Movie):
     episod = models.PositiveSmallIntegerField("Количество Эпизодов", null=False)
     season = models.PositiveSmallIntegerField("Количество сезонов", null=False)
 
-
     def __str__(self):
         return self.original_title
 
@@ -153,13 +150,12 @@ class Serial(Movie):
         verbose_name = "Сериал"
         verbose_name_plural = "Сериалы"
 
-class Film(Movie):
 
+class Film(Movie):
     budget = models.PositiveSmallIntegerField("Бюджет", default=0,
                                               help_text="укажите сумму в долларах")
     fees_in_world = models.PositiveIntegerField("Сборы в мире", default=0,
                                                 help_text="укажите сумму в долларах")
-
 
     def __str__(self):
         return self.original_title
@@ -175,15 +171,12 @@ class Cartoon(Movie):
     fees_in_world = models.PositiveIntegerField("Сборы в мире", default=0,
                                                 help_text="укажите сумму в долларах")
 
-
     def __str__(self):
         return self.original_title
 
     class Meta:
         verbose_name = "Мультфильм"
         verbose_name_plural = "Мультфильмы"
-
-
 
 
 class MovieShots(models.Model):
@@ -242,7 +235,3 @@ class Reviews(models.Model):
     class Meta:
         verbose_name = "Отзыв"
         verbose_name_plural = "Отзывы"
-
-
-
-
