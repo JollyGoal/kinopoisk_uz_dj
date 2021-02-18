@@ -2,8 +2,8 @@
 from django.contrib import admin
 from django.utils.safestring import mark_safe
 # Local imports
-from .models import Category, Genre, MovieShots, Actor, Rating, Film, \
-    RatingStar, Reviews, VideoTrailer, Serial, Cartoon, AgeRate
+from .models import Category, Genre, MovieShots, Actor, Rating, \
+    RatingStar, Reviews, VideoTrailer, AgeRate, Movie
 
 
 # Admin site display settings
@@ -22,7 +22,7 @@ class CategoryAdmin(admin.ModelAdmin):
 class MovieShotsInLine(admin.StackedInline):
     model = MovieShots
     extra = 3
-    fields = ('title', 'description', ('image', "display_screenshots"),)
+    fields = (('image', "display_screenshots"),)
     readonly_fields = ("display_screenshots",)
 
     def display_screenshots(self, obj):
@@ -31,15 +31,21 @@ class MovieShotsInLine(admin.StackedInline):
     display_screenshots.short_description = 'Скриншот'
 
 
-@admin.register(Film)
+@admin.register(Movie)
 class FilmAdmin(admin.ModelAdmin):
     list_display = ("title", "original_title", "id", 'draft')
     save_on_top = True
     list_editable = 'draft',
     save_as = True
     fieldsets = [
-        (None, {'fields': ['title', 'original_title', 'tagline']}),
+        (None, {'fields': ['title', 'original_title', 'year', 'country', 'category']}),
+        ('Информация', {'fields': ['tagline', 'description', 'genres']}),
+        ('Команда', {'fields': ['actors', 'scenario', 'director', ]}),
+        ('Информация для фильма', {'fields': ['budget', 'fees_in_world']}),
+        ('Информация для сериала', {'fields': ['episode', 'seasons']}),
+        ('XZ', {'fields': ['world_premiere', 'duration', 'age_rate']}),
         ('Постер', {'fields': [('poster', 'display_poster')]}),
+
     ]
     readonly_fields = ("display_poster",)
     inlines = [MovieShotsInLine]
@@ -50,21 +56,9 @@ class FilmAdmin(admin.ModelAdmin):
     display_poster.short_description = 'Постер'
 
 
-
-
 @admin.register(Genre)
 class GenreAdmin(admin.ModelAdmin):
     list_display = 'name',
-
-
-@admin.register(Cartoon)
-class CartoonAdmin(admin.ModelAdmin):
-    list_display = 'title',
-
-
-@admin.register(Serial)
-class SerialAdmin(admin.ModelAdmin):
-    list_display = 'title',
 
 
 @admin.register(Actor)
