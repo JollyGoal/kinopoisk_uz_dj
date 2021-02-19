@@ -26,20 +26,28 @@ class CategoryAdmin(admin.ModelAdmin):
 
     get_image.short_description = "Изображение"
 
-@admin.register(MovieShots)
-class MovieShotsAdmin(admin.ModelAdmin):
-    """КАДРЫ ИЗ ФИЛЬМА"""
-    list_display = 'image',
-    readonly_fields = 'get_image',
-
-    def get_image(self, obj):
-        return mark_safe(f'<img src={obj.image.url} width="50" height="60"')
-
-    get_image.short_description = "Изображение"
+# @admin.register(MovieShots)
+# class MovieShotsAdmin(admin.ModelAdmin):
+#     """КАДРЫ ИЗ ФИЛЬМА"""
+#     list_display = 'image',
+#     readonly_fields = 'get_image',
+#
+#     def get_image(self, obj):
+#         return mark_safe(f'<img src={obj.image.url} width="50" height="60"')
+#
+#     get_image.short_description = "Изображение"
 
 class MovieShotsInLine(admin.TabularInline):
     model = MovieShots
-    extra = 3
+    extra = 1
+
+    fields = (('image', "display_screenshots"),)
+    readonly_fields = ("display_screenshots",)
+
+    def display_screenshots(self, obj):
+        return mark_safe(f"<img src={obj.image.url} height='400'")
+
+    display_screenshots.short_description = 'Скриншот'
 
 class ReviewInLine(admin.TabularInline):
     model = Reviews
@@ -48,7 +56,7 @@ class ReviewInLine(admin.TabularInline):
 
 @admin.register(Movie)
 class MovieAdmin(admin.ModelAdmin):
-    list_display = ("title", "original_title", "category", "id", 'draft')
+    list_display = ("title", "original_title", "category", "id", 'draft'    )
     list_filter = ("category", "year")
     save_on_top = True
     list_editable = 'draft',
@@ -61,8 +69,14 @@ class MovieAdmin(admin.ModelAdmin):
         ('Информация для сериала', {'fields': ['episode', 'seasons']}),
         ('Дополнительно', {'fields': ['world_premiere', 'duration', 'age_rate']}),
         ('Постер', {'fields': [('poster', 'display_poster')]}),
+        ('Трейлер', {'fields': ['trailer']}),
 
     ]
+    # def display_file(self, obj):
+    #     return mark_safe(f"<img src={obj.trailer.url}")
+    #
+    # display_file.short_description = 'Трейлер'
+
     readonly_fields = ("display_poster",)
     inlines = [MovieShotsInLine, ReviewInLine]
 
@@ -73,12 +87,13 @@ class MovieAdmin(admin.ModelAdmin):
 
 @admin.register(Reviews)
 class ReviewAdmin(admin.ModelAdmin):
-    list_display = ("name" , "email", "parent", "movie", "id")
+    list_display = ("name", "email", "parent", "movie", "id")
     readonly_fields = ("name", "email")
 
 @admin.register(Genre)
 class GenreAdmin(admin.ModelAdmin):
-    list_display = 'name',
+    list_display = ("name",)
+    list_display_links = 'name',
 
 
 @admin.register(Actor)
@@ -107,8 +122,13 @@ class RatingStarAdmin(admin.ModelAdmin):
 
 @admin.register(VideoTrailer)
 class VideoTrailerAdmin(admin.ModelAdmin):
-    list_display = 'name',
+    list_display = 'name', 'file'
+    readonly_fields = 'get_file',
 
+    def get_file(self, obj):
+        return mark_safe(f'<img src={obj.file.url} width="500" height="600"')
+
+    get_file.short_description = "Трейлер"
 
 @admin.register(Director)
 class DirectorAdmin(admin.ModelAdmin):

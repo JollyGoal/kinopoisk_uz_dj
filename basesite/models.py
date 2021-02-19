@@ -73,6 +73,11 @@ class Genre(models.Model):
     name = models.CharField("Имя", max_length=100)
     url = models.SlugField(max_length=160, unique=True)
 
+    # def save(self, *args, **kwargs):
+    #     super().save(*args, **kwargs)
+    #     self.url = slugify(self.name, allow_unicode=True) + '-' + str(self.id)
+    #     super().save(update_fields=['url'])
+
     def __str__(self):
         return self.name
 
@@ -92,11 +97,6 @@ class VideoTrailer(models.Model):
     class Meta:
         verbose_name = "Трейлер"
         verbose_name_plural = "Трейлеры"
-
-class MovieShots(models.Model):
-    """КАДРЫ ИЗ ФИЛЬМА"""
-    image = models.ImageField("Изображение", upload_to="movie_shots/", null=False, blank=False)
-
 
 def __str__(self):
     return self.number
@@ -120,7 +120,7 @@ class Movie(models.Model):
                                     related_name="film_actor")
     scenario = models.ManyToManyField(Actor, verbose_name="Сценаристы",
                                       related_name="film_scenario")
-    genres = models.ManyToManyField(Genre, verbose_name="Жанры")
+    genres = models.ManyToManyField(Genre, verbose_name="Жанры", related_name="film_genres")
 
     world_premiere = models.DateField("Премьера в мире", default=date.today)
     budget = models.PositiveSmallIntegerField("Бюджет", blank=True, null=True, help_text="укажите сумму в долларах")
