@@ -98,13 +98,7 @@ class GenreAdmin(admin.ModelAdmin):
 
 @admin.register(Actor)
 class ActorAdmin(admin.ModelAdmin):
-    list_display = 'name', 'age', 'image'
-    readonly_fields = 'get_image',
-
-    def get_image(self, obj):
-        return mark_safe(f'<img src={obj.image.url} width="50" height="60"')
-
-    get_image.short_description = "Изображение"
+    list_display = 'name', 'image'
 
 
 @admin.register(Rating)

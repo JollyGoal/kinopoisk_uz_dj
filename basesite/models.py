@@ -98,12 +98,6 @@ class VideoTrailer(models.Model):
         verbose_name = "Трейлер"
         verbose_name_plural = "Трейлеры"
 
-def __str__(self):
-    return self.number
-
-class Meta:
-    verbose_name = "Кадр из фильма"
-    verbose_name_plural = "Кадры из фильма"
 
 class Movie(models.Model):
     """Фильм"""
@@ -114,11 +108,11 @@ class Movie(models.Model):
     poster = models.ImageField("Постер", upload_to="movies/")
     year = models.PositiveSmallIntegerField("Дата выхода", default=2021)
     country = models.CharField("Страна", max_length=30)
-    directors = models.ManyToManyField(Actor, verbose_name="Режиссер",
+    directors = models.ManyToManyField(Director, verbose_name="Режиссер",
                                        related_name="film_director")
     actors = models.ManyToManyField(Actor, verbose_name="Актеры",
                                     related_name="film_actor")
-    scenario = models.ManyToManyField(Actor, verbose_name="Сценаристы",
+    scenario = models.ManyToManyField(Scenario, verbose_name="Сценаристы",
                                       related_name="film_scenario")
     genres = models.ManyToManyField(Genre, verbose_name="Жанры", related_name="film_genres")
 
