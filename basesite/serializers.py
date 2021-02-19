@@ -8,11 +8,11 @@ class MovieListserializer(serializers.ModelSerializer):
         fields = ("title", "tagline", "category")
 
 
-#
-# class GenreSerializer(serializers.ModelSerializer):
-#     class Meta:
-#         model = Genre
-#         fields = ("name",)
+
+class GenreSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Genre
+        fields = ("name", "url")
 
 
 class VideoSerializer(serializers.ModelSerializer):
@@ -33,7 +33,7 @@ class MovieDetailSerializer(serializers.ModelSerializer):
     directors = serializers.SlugRelatedField(slug_field="name", read_only=True, many=True)
     actors = serializers.SlugRelatedField(slug_field="name", read_only=True, many=True)
     scenario = serializers.SlugRelatedField(slug_field="name", read_only=True, many=True)
-    genres = serializers.SlugRelatedField(slug_field="name", read_only=True, many=True)
+    genres = GenreSerializer(many=True)
     trailer = VideoSerializer()
     age_rate = AgeRateSerializer()
 
