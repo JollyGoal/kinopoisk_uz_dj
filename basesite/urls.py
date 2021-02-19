@@ -10,4 +10,5 @@ urlpatterns = [
     path("actor/<str:slug>/", views.ActorView.as_view(), name="actor_detail"),
     path("movies/", views.MovieListView.as_view()),
     path("movies/<int:pk>/", views.MovieDetailView.as_view()),
+    # path("movies/shots", views.MovieShotsView.as_view()),
     ]

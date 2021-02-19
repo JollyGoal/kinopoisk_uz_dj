@@ -73,6 +73,11 @@ class Genre(models.Model):
     name = models.CharField("Имя", max_length=100)
     url = models.SlugField(max_length=160, unique=True)
 
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        self.url = slugify(self.name, allow_unicode=True) + '-' + str(self.id)
+        super().save(update_fields=['url'])
+
     def __str__(self):
         return self.name
 
@@ -84,7 +89,7 @@ class Genre(models.Model):
 class VideoTrailer(models.Model):
     """ТРЕЙЛЕР"""
     name = models.CharField("Название трейлера", max_length=100)
-    file = models.FileField("Видео", upload_to="trailers/", null=False)
+    file = models.FileField("Видео", upload_to="trailers/", null=False, blank=False)
 
     def __str__(self):
         return self.name
@@ -103,15 +108,13 @@ class Movie(models.Model):
     poster = models.ImageField("Постер", upload_to="movies/")
     year = models.PositiveSmallIntegerField("Дата выхода", default=2021)
     country = models.CharField("Страна", max_length=30)
-    directors = models.ManyToManyField(Actor, verbose_name="Режиссер",
+    directors = models.ManyToManyField(Director, verbose_name="Режиссер",
                                        related_name="film_director")
     actors = models.ManyToManyField(Actor, verbose_name="Актеры",
                                     related_name="film_actor")
-    director = models.ManyToManyField(Director, verbose_name="Режиссер",
-                                      related_name="film_actor")
     scenario = models.ManyToManyField(Scenario, verbose_name="Сценаристы",
-                                      related_name="film_actor")
-    genres = models.ManyToManyField(Genre, verbose_name="Жанры")
+                                      related_name="film_scenario")
+    genres = models.ManyToManyField(Genre, verbose_name="Жанры", related_name="film_genres")
 
     world_premiere = models.DateField("Премьера в мире", default=date.today)
     budget = models.PositiveSmallIntegerField("Бюджет", blank=True, null=True, help_text="укажите сумму в долларах")
@@ -142,7 +145,14 @@ class Movie(models.Model):
         verbose_name = "Фильмы и Сериалы"
         verbose_name_plural = "Фильмы и Сериалы"
 
+class MovieShots(models.Model):
+    """КАДРЫ ИЗ ФИЛЬМА"""
+    image = models.ImageField("Изображение", upload_to="movie_shots/", null=False, blank=False)
+    movie = models.ForeignKey(Movie, verbose_name="Фильм", on_delete=models.CASCADE )
 
+    class Meta:
+        verbose_name = "Кадр из фильма"
+        verbose_name_plural = "Кадры из фильма"
 # class Serial(Movie):
 
 #
@@ -179,17 +189,7 @@ class Movie(models.Model):
 #         verbose_name_plural = "Мультфильмы"
 
 
-class MovieShots(models.Model):
-    """КАДРЫ ИЗ ФИЛЬМА"""
-    image = models.ImageField("Изображение", upload_to="movie_shots/")
-    movie = models.ForeignKey(Movie, verbose_name="Фильм", on_delete=models.CASCADE)
 
-    def __str__(self):
-        return self.movie.original_title
-
-    class Meta:
-        verbose_name = "Кадр из фильма"
-        verbose_name_plural = "Кадры из фильма"
 
 
 class RatingStar(models.Model):
