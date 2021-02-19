@@ -1,12 +1,21 @@
 from django.shortcuts import render, redirect
 from django.views.generic.base import View
 from django.views.generic import ListView, DetailView
+from rest_framework.generics import ListAPIView
+from rest_framework.pagination import PageNumberPagination
+
 from .models import Movie, Actor, MovieShots
 from .forms import ReviewForm
-from .serializers import MovieListserializer, MovieDetailSerializer, MovieShotsSerializer
+from .serializers import MovieListserializer, MovieDetailSerializer, MovieShotsSerializer, ReviewCreateSerializers
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import permissions
+
+
+class LargeResultsSetPagination(PageNumberPagination):
+    page_size = 15
+    page_size_query_param = 'page_size'
+    max_page_size = 15
 
 
 class MoviesView(ListView):
@@ -19,12 +28,6 @@ class MoviesView(ListView):
     #     context = super().get_context_data(*args, **kwargs)
     #     context["categories"] = Category.objects.all()
     #     return context
-
-
-class MovieDetailsView(DetailView):
-    """ПОЛНОЕ ОПИСАНИЕ ФИЛЬМА"""
-    model = Movie
-    slug_field = "url"
 
 
 class AddReview(View):
@@ -45,20 +48,11 @@ class AddReview(View):
         return redirect(movie.get_absolute_url())
 
 
-class ActorView(DetailView):
-    """ВЫВОД ИНФОРМАЦИИ О АКТЕРЕ"""
-    model = Actor
-    template_name = 'basesite/actor.html'
-    slug_field = "name"
-
-
-class MovieListView(APIView):
+class MovieListView(ListAPIView):
     """вывод список фильмов"""
-
-    def get(self, request):
-        movie = Movie.objects.filter(draft=False)
-        serializer = MovieListserializer(movie, many=True)
-        return Response(serializer.data)
+    queryset = Movie.objects.filter(draft=False)
+    serializer_class = MovieListserializer
+    pagination_class = LargeResultsSetPagination
 
 
 class MovieDetailView(APIView):
@@ -67,7 +61,7 @@ class MovieDetailView(APIView):
         serializer = MovieDetailSerializer(movie)
         movie_shots = MovieShots.objects.filter(movie__id=pk)
         ser_shots = MovieShotsSerializer(movie_shots, many=True)
-        return Response({'movie:': serializer.data, 'shots': ser_shots.data})
+        return Response({'movie': serializer.data, 'shots': ser_shots.data})
 
     def post(self, request, pk):
         movie = Movie.objects.get(id=pk, draft=False)
@@ -76,3 +70,12 @@ class MovieDetailView(APIView):
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors)
+
+class ReviewCreateView(APIView):
+    """ДОБАВЛЕНИЕ ОТЗЫВА К ФИЛЬМУ"""
+
+    def post(self, request):
+        review = ReviewCreateSerializers(data=request.data)
+        if review.is_valid():
+            review.save()
+        return Response(status=201)
