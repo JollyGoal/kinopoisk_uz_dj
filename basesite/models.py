@@ -73,10 +73,10 @@ class Genre(models.Model):
     name = models.CharField("Имя", max_length=100)
     url = models.SlugField(max_length=160, unique=True)
 
-    # def save(self, *args, **kwargs):
-    #     super().save(*args, **kwargs)
-    #     self.url = slugify(self.name, allow_unicode=True) + '-' + str(self.id)
-    #     super().save(update_fields=['url'])
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        self.url = slugify(self.name, allow_unicode=True) + '-' + str(self.id)
+        super().save(update_fields=['url'])
 
     def __str__(self):
         return self.name
