@@ -1,12 +1,11 @@
 from django.shortcuts import render, redirect
 from django.views.generic.base import View
-from django.views.generic import ListView, DetailView
+from django.views.generic import ListView
 from rest_framework.generics import ListAPIView
 from rest_framework.pagination import PageNumberPagination
-
 from .models import Movie, Actor, MovieShots
 from .forms import ReviewForm
-from .serializers import MovieListserializer, MovieDetailSerializer, MovieShotsSerializer, ReviewCreateSerializers
+from .serializers import MovieListSerializer, MovieDetailSerializer, MovieShotsSerializer, ReviewCreateSerializer
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import permissions
@@ -22,12 +21,6 @@ class MoviesView(ListView):
     """СПИСОК ФИЛЬМОВ"""
     model = Movie
     queryset = Movie.objects.filter(draft=False)
-    # template_name = "movies/movies_list.html"
-
-    # def get_context_data(self, *args, **kwargs):
-    #     context = super().get_context_data(*args, **kwargs)
-    #     context["categories"] = Category.objects.all()
-    #     return context
 
 
 class AddReview(View):
@@ -51,7 +44,7 @@ class AddReview(View):
 class MovieListView(ListAPIView):
     """вывод список фильмов"""
     queryset = Movie.objects.filter(draft=False)
-    serializer_class = MovieListserializer
+    serializer_class = MovieListSerializer
     pagination_class = LargeResultsSetPagination
 
 
@@ -75,7 +68,7 @@ class ReviewCreateView(APIView):
     """ДОБАВЛЕНИЕ ОТЗЫВА К ФИЛЬМУ"""
 
     def post(self, request):
-        review = ReviewCreateSerializers(data=request.data)
+        review = ReviewCreateSerializer(data=request.data)
         if review.is_valid():
             review.save()
         return Response(status=201)
