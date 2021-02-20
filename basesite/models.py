@@ -138,8 +138,8 @@ class Movie(models.Model):
         self.url = slugify(self.original_title, allow_unicode=True) + '-' + str(self.id)
         super().save(update_fields=['url'])
 
-    def get_review(self):
-        return self.reviews_set.filter(parent__isnull=True)
+    # def get_review(self):
+    #     return self.reviews_set.filter(parent__isnull=True)
 
     class Meta:
         verbose_name = "Фильмы и Сериалы"
@@ -224,8 +224,8 @@ class Reviews(models.Model):
     name = models.CharField("Имя", max_length=100)
     text = models.TextField("Сообщение", max_length=5000)
     parent = models.ForeignKey('self', verbose_name="Родитель",
-                               on_delete=models.SET_NULL, blank=True, null=True)
-    movie = models.ForeignKey(Movie, verbose_name="фильм", on_delete=models.CASCADE)
+                               on_delete=models.SET_NULL, blank=True, null=True, related_name="children")
+    movie = models.ForeignKey(Movie, verbose_name="фильм", on_delete=models.CASCADE, related_name="reviews")
 
     def __str__(self):
         return f"{self.name} - {self.movie}"
