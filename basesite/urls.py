@@ -13,4 +13,5 @@ urlpatterns = [
     path("ratings/", views.AddStarRatingView.as_view()),
     path("all-profiles", views.UserProfileListCreateView.as_view(),name="all-profiles"),
     path("profile/<int:pk>", views.UserProfileDetailView.as_view(), name="profile"),
+    path("create/", views.UserCreateView.as_view())
 ]

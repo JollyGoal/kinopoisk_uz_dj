@@ -62,15 +62,10 @@ class UserProfileSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-
-
-    def create(self, validated_data):
-        rating = Rating.objects.update_or_create(
-            ip=validated_data.get('ip', None),
-            movie=validated_data.get('movie', None),
-            defaults={'star': validated_data.get('star')}
-        )
-        return rating
+class UserCreateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserProfile
+        fields = '__all__'
 
 
 
@@ -119,6 +114,7 @@ class MovieDetailSerializer(serializers.ModelSerializer):
     age_rate = AgeRateSerializer()
     reviews = ReviewSerializer(many=True)
     ratings = CreateRatingSerializer(many=True)
+    username = UserProfileSerializer()
 
     class Meta:
         model = Movie

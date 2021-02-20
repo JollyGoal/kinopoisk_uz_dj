@@ -13,7 +13,9 @@ from .serializers import (
     PersonListSerializer,
     PersonDetailSerializer,
     CreateRatingSerializer,
-    UserProfileSerializer)
+    UserProfileSerializer,
+    UserCreateSerializer
+)
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import permissions, generics
@@ -118,6 +120,8 @@ class AddStarRatingView(APIView):
             return Response(status=201)
         return Response(status=400)
 
+
+
 class UserProfileListCreateView(ListCreateAPIView):
     queryset=UserProfile.objects.all()
     serializer_class=UserProfileSerializer
@@ -133,10 +137,13 @@ class UserProfileDetailView(RetrieveUpdateDestroyAPIView):
     serializer_class=UserProfileSerializer
     permission_classes=[IsAuthenticated]
 
-# class UserRegisterView(APIView):
-#     def post(self, request):
-#         serializer = CreateRatingSerializer(data=request.data)
-#         if serializer.is_valid():
-#             serializer.save()
-#             return Response(status=201)
-#         return Response(status=400)
+
+class UserCreateView(APIView):
+    serializer_class = UserCreateSerializer
+
+    def post(self, request):
+        serializer = UserCreateSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(status=201)
+        return Response(status=400)

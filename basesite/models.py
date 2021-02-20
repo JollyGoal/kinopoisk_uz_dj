@@ -242,12 +242,16 @@ class Reviews(models.Model):
         verbose_name_plural = "Отзывы"
 
 class UserProfile(models.Model):
-    user=models.OneToOneField(User,on_delete=models.CASCADE,related_name="profile")
-    description=models.TextField(blank=True,null=True)
-    location=models.CharField(max_length=30,blank=True)
-    date_joined=models.DateTimeField(auto_now_add=True)
-    updated_on=models.DateTimeField(auto_now=True)
-    is_organizer=models.BooleanField(default=False)
+    username = models.CharField("User Name", max_length=25)
+    password = models.CharField("Пароль", max_length=25)
+    email = models.EmailField("E-mail")
+    reviews = models.ForeignKey(Reviews, verbose_name="Отзывы", on_delete=models.CASCADE, related_name="users_reviews")
+    rating = models.ForeignKey(Rating, verbose_name="Рейтинги", on_delete=models.CASCADE, related_name="users_rating")
+    # description=models.TextField(blank=True,null=True)
+    # location=models.CharField(max_length=30,blank=True)
+    # date_joined=models.DateTimeField(auto_now_add=True)
+    # updated_on=models.DateTimeField(auto_now=True)
+    # is_organizer=models.BooleanField(default=False)
 
     def __str__(self):
-        return self.user.username
+        return self.username
