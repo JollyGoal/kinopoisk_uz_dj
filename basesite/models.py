@@ -33,6 +33,12 @@ class ParentClassPerson(models.Model):
     age = models.PositiveSmallIntegerField("Возраст", default=0)
     description = models.TextField("Описание", blank=True)
     image = models.ImageField("Изображение", upload_to="people/")
+    url = models.SlugField(max_length=160, unique=True)
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        self.url = slugify(self.name, allow_unicode=True) + '-' + str(self.id)
+        super().save(update_fields=['url'])
 
 
 class Actor(ParentClassPerson):
@@ -208,7 +214,7 @@ class Rating(models.Model):
     """РЕЙТИНГ"""
     ip = models.CharField("IP адрес", max_length=15)
     star = models.ForeignKey(RatingStar, on_delete=models.CASCADE, verbose_name="звезда")
-    movie = models.ForeignKey(Movie, on_delete=models.CASCADE, verbose_name="фильм")
+    movie = models.ForeignKey(Movie, on_delete=models.CASCADE, verbose_name="фильм", related_name='ratings')
 
     def __str__(self):
         return f"{self.star} - {self.movie}"
