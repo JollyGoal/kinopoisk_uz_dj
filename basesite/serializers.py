@@ -1,5 +1,6 @@
+from djoser.conf import User
 from rest_framework import serializers
-from .models import Movie, Genre, VideoTrailer, AgeRate, MovieShots, Reviews, Actor, Rating
+from .models import Movie, Genre, VideoTrailer, AgeRate, MovieShots, Reviews, Actor, Rating, UserProfile, User
 from rest_framework import serializers
 
 
@@ -51,6 +52,26 @@ class CreateRatingSerializer(serializers.ModelSerializer):
             defaults={'star': validated_data.get('star')}
         )
         return rating
+
+
+class UserProfileSerializer(serializers.ModelSerializer):
+    user = serializers.StringRelatedField(read_only=True)
+
+    class Meta:
+        model = UserProfile
+        fields = '__all__'
+
+
+
+
+    def create(self, validated_data):
+        rating = Rating.objects.update_or_create(
+            ip=validated_data.get('ip', None),
+            movie=validated_data.get('movie', None),
+            defaults={'star': validated_data.get('star')}
+        )
+        return rating
+
 
 
 

@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
     'djoser',
+    'rest_framework_simplejwt',
     'corsheaders',
 ]
 
@@ -57,9 +58,9 @@ REST_FRAMEWORK = {
     'PAGE_SIZE': 1,
     # Use Django's standard `django.contrib.auth` permissions,
     # or allow read-only access for unauthenticated users. IsAuthenticated
-    # 'DEFAULT_PERMISSION_CLASSES': [
-    #     'rest_framework.permissions.AllowAny',
-    # ],
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticated',
+    ],
 }
 
 DJOSER = {

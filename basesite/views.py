@@ -3,7 +3,7 @@ from django.views.generic.base import View
 from django.views.generic import ListView
 from rest_framework.generics import ListAPIView
 from rest_framework.pagination import PageNumberPagination
-from .models import Movie, Actor, MovieShots
+from .models import Movie, Actor, MovieShots, UserProfile
 from .forms import ReviewForm
 from .serializers import (
     MovieListSerializer,
@@ -12,11 +12,14 @@ from .serializers import (
     ReviewCreateSerializer,
     PersonListSerializer,
     PersonDetailSerializer,
-    CreateRatingSerializer)
+    CreateRatingSerializer,
+    UserProfileSerializer)
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import permissions, generics
-from django.db import models
+from rest_framework.generics import (ListCreateAPIView,RetrieveUpdateDestroyAPIView,)
+from rest_framework.permissions import IsAuthenticated
+
 
 def get_client_ip(self, request):
     x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
@@ -114,3 +117,26 @@ class AddStarRatingView(APIView):
             serializer.save(ip=get_client_ip(request))
             return Response(status=201)
         return Response(status=400)
+
+class UserProfileListCreateView(ListCreateAPIView):
+    queryset=UserProfile.objects.all()
+    serializer_class=UserProfileSerializer
+    permission_classes=[IsAuthenticated]
+
+    def perform_create(self, serializer):
+        user=self.request.user
+        serializer.save(user=user)
+
+
+class UserProfileDetailView(RetrieveUpdateDestroyAPIView):
+    queryset=UserProfile.objects.all()
+    serializer_class=UserProfileSerializer
+    permission_classes=[IsAuthenticated]
+
+# class UserRegisterView(APIView):
+#     def post(self, request):
+#         serializer = CreateRatingSerializer(data=request.data)
+#         if serializer.is_valid():
+#             serializer.save()
+#             return Response(status=201)
+#         return Response(status=400)

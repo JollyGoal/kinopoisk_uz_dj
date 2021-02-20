@@ -1,6 +1,7 @@
 from django.db import models
 from datetime import date
 from django.utils.text import slugify
+from django.contrib.auth.models import User
 
 
 class Category(models.Model):
@@ -239,3 +240,14 @@ class Reviews(models.Model):
     class Meta:
         verbose_name = "Отзыв"
         verbose_name_plural = "Отзывы"
+
+class UserProfile(models.Model):
+    user=models.OneToOneField(User,on_delete=models.CASCADE,related_name="profile")
+    description=models.TextField(blank=True,null=True)
+    location=models.CharField(max_length=30,blank=True)
+    date_joined=models.DateTimeField(auto_now_add=True)
+    updated_on=models.DateTimeField(auto_now=True)
+    is_organizer=models.BooleanField(default=False)
+
+    def __str__(self):
+        return self.user.username
