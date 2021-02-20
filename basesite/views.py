@@ -5,10 +5,16 @@ from rest_framework.generics import ListAPIView
 from rest_framework.pagination import PageNumberPagination
 from .models import Movie, Actor, MovieShots
 from .forms import ReviewForm
-from .serializers import MovieListSerializer, MovieDetailSerializer, MovieShotsSerializer, ReviewCreateSerializer
+from .serializers import (
+    MovieListSerializer,
+    MovieDetailSerializer,
+    MovieShotsSerializer,
+    ReviewCreateSerializer,
+    PersonListSerializer,
+    PersonDetailSerializer)
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework import permissions
+from rest_framework import permissions, generics
 
 
 class LargeResultsSetPagination(PageNumberPagination):
@@ -72,3 +78,13 @@ class ReviewCreateView(APIView):
         if review.is_valid():
             review.save()
         return Response(status=201)
+
+class PersonsListView(generics.ListAPIView):
+    """ВЫВОД СПИСКА ПЕРСОН"""
+    queryset = Actor.objects.all()
+    serializer_class = PersonListSerializer
+
+class PersonsDetailView(generics.RetrieveAPIView):
+    """ВЫВОД ПЕРСОН"""
+    queryset = Actor.objects.all()
+    serializer_class = PersonDetailSerializer

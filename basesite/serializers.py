@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Movie, Genre, VideoTrailer, AgeRate, MovieShots, Reviews
+from .models import Movie, Genre, VideoTrailer, AgeRate, MovieShots, Reviews, Actor
 from rest_framework import serializers
 
 
@@ -16,6 +16,20 @@ class RecursiveSerializer(serializers.ModelSerializer):
     def to_representation(self, value):
         serializer = self.parent.parent.__class__(value, context=self.context)
         return serializer.data
+
+class PersonListSerializer(serializers.ModelSerializer):
+    """ВЫВОД СПИСОК АКТЕРОВ РЕЖИССЕРОВ И СЦЕНАРИСТОВ"""
+    class Meta:
+        model = Actor
+        fields = ("id", "name", "image")
+
+
+class PersonDetailSerializer(serializers.ModelSerializer):
+    """ВЫВОД ИНФОРМАЦИИ АКТЕРОВ РЕЖИССЕРОВ И СЦЕНАРИСТОВ"""
+    class Meta:
+        model = Actor
+        fields = "__all__"
+
 
 class MovieListSerializer(serializers.ModelSerializer):
 
@@ -61,9 +75,9 @@ class ReviewSerializer(serializers.ModelSerializer):
 class MovieDetailSerializer(serializers.ModelSerializer):
     """ПОЛНЫЙ ФИЛЬМ"""
     category = serializers.SlugRelatedField(slug_field="name", read_only=True)
-    directors = serializers.SlugRelatedField(slug_field="name", read_only=True, many=True)
-    actors = serializers.SlugRelatedField(slug_field="name", read_only=True, many=True)
-    scenario = serializers.SlugRelatedField(slug_field="name", read_only=True, many=True)
+    directors = PersonListSerializer(many=True)
+    actors = PersonListSerializer(many=True)
+    scenario = PersonListSerializer(many=True)
     genres = GenreSerializer(many=True)
     trailer = VideoSerializer()
     age_rate = AgeRateSerializer()
