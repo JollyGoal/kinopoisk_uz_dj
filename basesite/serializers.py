@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Movie, Genre, VideoTrailer, AgeRate, MovieShots, Reviews, Actor
+from .models import Movie, Genre, VideoTrailer, AgeRate, MovieShots, Reviews, Actor, Rating
 from rest_framework import serializers
 
 
@@ -21,7 +21,7 @@ class PersonListSerializer(serializers.ModelSerializer):
     """ВЫВОД СПИСОК АКТЕРОВ РЕЖИССЕРОВ И СЦЕНАРИСТОВ"""
     class Meta:
         model = Actor
-        fields = ("id", "name", "image")
+        fields = ("id", "name", "image", "url", )
 
 
 class PersonDetailSerializer(serializers.ModelSerializer):
@@ -32,10 +32,25 @@ class PersonDetailSerializer(serializers.ModelSerializer):
 
 
 class MovieListSerializer(serializers.ModelSerializer):
+    # ratings_user = serializers.BooleanField()
 
     class Meta:
         model = Movie
-        fields = ("id", "original_title", "year", "url")
+        fields = ("title", "tagline", "category", "ratings")
+
+
+class CreateRatingSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Rating
+        fields = ("star", "movie")
+
+    def create(self, validated_data):
+        rating = Rating.objects.update_or_create(
+            ip=validated_data.get('ip', None),
+            movie=validated_data.get('movie', None),
+            defaults={'star': validated_data.get('star')}
+        )
+        return rating
 
 
 
@@ -82,6 +97,7 @@ class MovieDetailSerializer(serializers.ModelSerializer):
     trailer = VideoSerializer()
     age_rate = AgeRateSerializer()
     reviews = ReviewSerializer(many=True)
+    ratings = CreateRatingSerializer(many=True)
 
     class Meta:
         model = Movie

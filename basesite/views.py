@@ -11,10 +11,20 @@ from .serializers import (
     MovieShotsSerializer,
     ReviewCreateSerializer,
     PersonListSerializer,
-    PersonDetailSerializer)
+    PersonDetailSerializer,
+    CreateRatingSerializer)
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import permissions, generics
+from django.db import models
+
+def get_client_ip(self, request):
+    x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+    if x_forwarded_for:
+        ip = x_forwarded_for.split(',')[0]
+        return ip
+    ip = request.META.get('REMOTE_ADDR')
+    return ip
 
 
 class LargeResultsSetPagination(PageNumberPagination):
@@ -52,6 +62,18 @@ class MovieListView(ListAPIView):
     queryset = Movie.objects.filter(draft=False)
     serializer_class = MovieListSerializer
     pagination_class = LargeResultsSetPagination
+    permission_classes = [permissions.IsAuthenticated]
+
+    # def get(self, request):
+    #     movie = Movie.objects.filter(draft=False).annotate(
+    #         ratings_user=models.Case(
+    #             models.When(ratings__ip=get_client_ip(self, request), then=True),
+    #             default=False,
+    #             output_field=models.BooleanField()
+    #         )
+    #     )
+    #     serializer = MovieListSerializer(movie, many=True)
+    #     return Response(serializer.data)
 
 
 class MovieDetailView(APIView):
@@ -70,14 +92,9 @@ class MovieDetailView(APIView):
             return Response(serializer.data)
         return Response(serializer.errors)
 
-class ReviewCreateView(APIView):
+class ReviewCreateView(generics.CreateAPIView):
     """ДОБАВЛЕНИЕ ОТЗЫВА К ФИЛЬМУ"""
-
-    def post(self, request):
-        review = ReviewCreateSerializer(data=request.data)
-        if review.is_valid():
-            review.save()
-        return Response(status=201)
+    serializer_class = ReviewCreateSerializer
 
 class PersonsListView(generics.ListAPIView):
     """ВЫВОД СПИСКА ПЕРСОН"""
@@ -88,3 +105,12 @@ class PersonsDetailView(generics.RetrieveAPIView):
     """ВЫВОД ПЕРСОН"""
     queryset = Actor.objects.all()
     serializer_class = PersonDetailSerializer
+
+class AddStarRatingView(APIView):
+
+    def post(self, request):
+        serializer = CreateRatingSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save(ip=get_client_ip(request))
+            return Response(status=201)
+        return Response(status=400)
