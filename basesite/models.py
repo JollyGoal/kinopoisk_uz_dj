@@ -194,6 +194,7 @@ class Reviews(models.Model):
     text = models.TextField("Сообщение", max_length=5000)
     parent = models.ForeignKey('self', verbose_name="Родитель",
                                on_delete=models.SET_NULL, blank=True, null=True, related_name="children")
+    date = models.DateTimeField("Дата комментария", auto_now_add=True)
     movie = models.ForeignKey(Movie, verbose_name="фильм", on_delete=models.CASCADE, related_name="reviews")
 
     def __str__(self):
