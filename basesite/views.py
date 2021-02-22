@@ -1,8 +1,9 @@
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render, redirect
 from django.views.generic.base import View
 from rest_framework.generics import ListAPIView
 from rest_framework.pagination import PageNumberPagination
-from .models import Movie, Actor, MovieShots
+from .models import Movie, Actor, MovieShots, Reviews
 from .forms import ReviewForm
 from .serializers import (
     MovieListSerializer,
@@ -16,6 +17,7 @@ from .serializers import (
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import permissions, generics
+
 
 def get_client_ip(self, request):
     x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
@@ -32,22 +34,22 @@ class LargeResultsSetPagination(PageNumberPagination):
     max_page_size = 15
 
 
-class AddReview(View):
-    """ОТПРАВКА ОТЗЫВОВ"""
-
-    def post(self, request, pk):
-        form = ReviewForm(request.POST)
-        movie = Movie.objects.get(id=pk)
-        print(form)
-        if form.is_valid():
-            form = form.save(commit=False)
-            if request.POST.get("parent", None):
-                form.parent_id = int(request.POST.get("parent"))
-            form.movie = movie
-            form.save()
-        else:
-            print("Форма не валидна")
-        return redirect(movie.get_absolute_url())
+# class AddReview(View):
+#     """ОТПРАВКА ОТЗЫВОВ"""
+#
+#     def post(self, request, pk):
+#         form = ReviewForm(request.POST)
+#         movie = Movie.objects.get(id=pk)
+#         print(form)
+#         if form.is_valid():
+#             form = form.save(commit=False)
+#             if request.POST.get("parent", None):
+#                 form.parent_id = int(request.POST.get("parent"))
+#             form.movie = movie
+#             form.save()
+#         else:
+#             print("Форма не валидна")
+#         return redirect(movie.get_absolute_url())
 
 
 class MovieListView(ListAPIView):
@@ -69,6 +71,8 @@ class MovieListView(ListAPIView):
 
 
 class MovieDetailView(APIView):
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+
     def get(self, request, pk):
         movie = Movie.objects.get(id=pk, draft=False)
         serializer = MovieDetailSerializer(movie)
@@ -84,20 +88,29 @@ class MovieDetailView(APIView):
             return Response(serializer.data)
         return Response(serializer.errors)
 
-class ReviewCreateView(generics.CreateAPIView):
+class ReviewDelete(generics.DestroyAPIView):
+    """УДАЛЕНИЕ ОТЗЫВА"""
+    queryset = Reviews.objects.all()
+    permission_classes = [permissions.IsAdminUser]
+
+
+class ReviewCreateView(LoginRequiredMixin, generics.CreateAPIView):
     """ДОБАВЛЕНИЕ ОТЗЫВА К ФИЛЬМУ"""
     serializer_class = ReviewCreateSerializer
-    permission_classes = [permissions.IsAuthenticated]
+
+
 
 class PersonsListView(generics.ListAPIView):
     """ВЫВОД СПИСКА ПЕРСОН"""
     queryset = Actor.objects.all()
     serializer_class = PersonListSerializer
 
+
 class PersonsDetailView(generics.RetrieveAPIView):
     """ВЫВОД ПЕРСОН"""
     queryset = Actor.objects.all()
     serializer_class = PersonDetailSerializer
+
 
 class AddStarRatingView(APIView):
 
@@ -107,5 +120,3 @@ class AddStarRatingView(APIView):
             serializer.save(ip=get_client_ip(request))
             return Response(status=201)
         return Response(status=400)
-
-
