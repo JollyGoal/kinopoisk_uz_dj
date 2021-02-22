@@ -87,6 +87,7 @@ class MovieDetailView(APIView):
 class ReviewCreateView(generics.CreateAPIView):
     """ДОБАВЛЕНИЕ ОТЗЫВА К ФИЛЬМУ"""
     serializer_class = ReviewCreateSerializer
+    permission_classes = [permissions.IsAuthenticated]
 
 class PersonsListView(generics.ListAPIView):
     """ВЫВОД СПИСКА ПЕРСОН"""
