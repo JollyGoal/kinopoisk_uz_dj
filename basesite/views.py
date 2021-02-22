@@ -1,9 +1,8 @@
 from django.shortcuts import render, redirect
 from django.views.generic.base import View
-from django.views.generic import ListView
 from rest_framework.generics import ListAPIView
 from rest_framework.pagination import PageNumberPagination
-from .models import Movie, Actor, MovieShots, UserProfile
+from .models import Movie, Actor, MovieShots
 from .forms import ReviewForm
 from .serializers import (
     MovieListSerializer,
@@ -13,15 +12,10 @@ from .serializers import (
     PersonListSerializer,
     PersonDetailSerializer,
     CreateRatingSerializer,
-    UserProfileSerializer,
-    UserCreateSerializer
 )
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import permissions, generics
-from rest_framework.generics import (ListCreateAPIView,RetrieveUpdateDestroyAPIView,)
-from rest_framework.permissions import IsAuthenticated
-
 
 def get_client_ip(self, request):
     x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
@@ -36,12 +30,6 @@ class LargeResultsSetPagination(PageNumberPagination):
     page_size = 15
     page_size_query_param = 'page_size'
     max_page_size = 15
-
-
-class MoviesView(ListView):
-    """СПИСОК ФИЛЬМОВ"""
-    model = Movie
-    queryset = Movie.objects.filter(draft=False)
 
 
 class AddReview(View):
@@ -67,7 +55,6 @@ class MovieListView(ListAPIView):
     queryset = Movie.objects.filter(draft=False)
     serializer_class = MovieListSerializer
     pagination_class = LargeResultsSetPagination
-    permission_classes = [permissions.IsAuthenticated]
 
     # def get(self, request):
     #     movie = Movie.objects.filter(draft=False).annotate(
@@ -121,29 +108,3 @@ class AddStarRatingView(APIView):
         return Response(status=400)
 
 
-
-class UserProfileListCreateView(ListCreateAPIView):
-    queryset=UserProfile.objects.all()
-    serializer_class=UserProfileSerializer
-    permission_classes=[IsAuthenticated]
-
-    def perform_create(self, serializer):
-        user=self.request.user
-        serializer.save(user=user)
-
-
-class UserProfileDetailView(RetrieveUpdateDestroyAPIView):
-    queryset=UserProfile.objects.all()
-    serializer_class=UserProfileSerializer
-    permission_classes=[IsAuthenticated]
-
-
-class UserCreateView(APIView):
-    serializer_class = UserCreateSerializer
-
-    def post(self, request):
-        serializer = UserCreateSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(status=201)
-        return Response(status=400)

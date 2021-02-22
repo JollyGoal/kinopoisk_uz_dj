@@ -1,6 +1,6 @@
 from djoser.conf import User
 from rest_framework import serializers
-from .models import Movie, Genre, VideoTrailer, AgeRate, MovieShots, Reviews, Actor, Rating, UserProfile, User
+from .models import Movie, Genre, VideoTrailer, AgeRate, MovieShots, Reviews, Actor, Rating, UserProfile
 from rest_framework import serializers
 
 
@@ -54,21 +54,6 @@ class CreateRatingSerializer(serializers.ModelSerializer):
         return rating
 
 
-class UserProfileSerializer(serializers.ModelSerializer):
-    user = serializers.StringRelatedField(read_only=True)
-
-    class Meta:
-        model = UserProfile
-        fields = '__all__'
-
-
-class UserCreateSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = UserProfile
-        fields = '__all__'
-
-
-
 
 class GenreSerializer(serializers.ModelSerializer):
     class Meta:
@@ -101,7 +86,7 @@ class ReviewSerializer(serializers.ModelSerializer):
     class Meta:
         list_serializer_class = FilterReviewListSerializer
         model = Reviews
-        fields = ("name", "text", "children")
+        fields = ("first_name", "name", "text", "children")
 
 class MovieDetailSerializer(serializers.ModelSerializer):
     """ПОЛНЫЙ ФИЛЬМ"""
@@ -114,7 +99,6 @@ class MovieDetailSerializer(serializers.ModelSerializer):
     age_rate = AgeRateSerializer()
     reviews = ReviewSerializer(many=True)
     ratings = CreateRatingSerializer(many=True)
-    username = UserProfileSerializer()
 
     class Meta:
         model = Movie
