@@ -1,7 +1,7 @@
 from django.db import models
 from datetime import date
 from django.utils.text import slugify
-from django.contrib.auth.models import User
+from customusers.models import Account
 
 
 class Category(models.Model):
@@ -190,11 +190,11 @@ class Rating(models.Model):
 
 class Reviews(models.Model):
     """ОТЗЫВ"""
-    email = models.EmailField()
-    author = models.ForeignKey(User, on_delete=models.CASCADE, related_name="review")
+    author = models.ForeignKey(Account, on_delete=models.CASCADE, related_name="review")
     text = models.TextField("Сообщение", max_length=5000)
     parent = models.ForeignKey('self', verbose_name="Родитель",
                                on_delete=models.SET_NULL, blank=True, null=True, related_name="children")
+    date = models.DateTimeField("Дата комментария", auto_now_add=True)
     movie = models.ForeignKey(Movie, verbose_name="фильм", on_delete=models.CASCADE, related_name="reviews")
 
     def __str__(self):
@@ -203,20 +203,3 @@ class Reviews(models.Model):
     class Meta:
         verbose_name = "Отзыв"
         verbose_name_plural = "Отзывы"
-
-class UserProfile(models.Model):
-    user = models.CharField("User Name", max_length=25)
-    password = models.CharField("Пароль", max_length=25)
-    email = models.EmailField("E-mail")
-    reviews = models.ForeignKey(Reviews, verbose_name="Отзывы", on_delete=models.CASCADE, related_name="users_reviews",
-                                blank=True, null=True)
-    rating_star = models.ForeignKey(RatingStar, verbose_name="Рейтинги", on_delete=models.CASCADE, related_name="users_rating",
-                               blank=True, null=True)
-    # description=models.TextField(blank=True,null=True)
-    # location=models.CharField(max_length=30,blank=True)
-    # date_joined=models.DateTimeField(auto_now_add=True)
-    # updated_on=models.DateTimeField(auto_now=True)
-    # is_organizer=models.BooleanField(default=False)
-
-    def __str__(self):
-        return self.user

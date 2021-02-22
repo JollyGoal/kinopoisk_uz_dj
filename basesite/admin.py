@@ -52,7 +52,7 @@ class MovieShotsInLine(admin.TabularInline):
 class ReviewInLine(admin.TabularInline):
     model = Reviews
     extra = 1
-    readonly_fields = ("author", "email")
+    readonly_fields = ("author", )
 
 @admin.register(Movie)
 class MovieAdmin(admin.ModelAdmin):
@@ -87,8 +87,8 @@ class MovieAdmin(admin.ModelAdmin):
 
 @admin.register(Reviews)
 class ReviewAdmin(admin.ModelAdmin):
-    list_display = ("email", "author", "parent", "movie", "id")
-    readonly_fields = ("author", "email")
+    list_display = ("author", "parent", "movie", "id", )
+    readonly_fields = ("author", "date")
 
 @admin.register(Genre)
 class GenreAdmin(admin.ModelAdmin):
