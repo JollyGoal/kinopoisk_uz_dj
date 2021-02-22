@@ -40,12 +40,15 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'basesite',
+    'customusers',
     'rest_framework',
     'rest_framework.authtoken',
     'djoser',
     'rest_framework_simplejwt',
     'corsheaders',
 ]
+
+AUTH_USER_MODEL = 'customusers.Account'
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
@@ -127,6 +130,8 @@ TEMPLATES = [
         },
     },
 ]
+
+
 
 WSGI_APPLICATION = 'kinopoisk_uz_dj.wsgi.application'
 
