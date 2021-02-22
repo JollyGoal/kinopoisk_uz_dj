@@ -1,6 +1,5 @@
 from django.shortcuts import render, redirect
 from django.views.generic.base import View
-from django.views.generic import ListView
 from rest_framework.generics import ListAPIView
 from rest_framework.pagination import PageNumberPagination
 from .models import Movie, Actor, MovieShots
@@ -12,11 +11,11 @@ from .serializers import (
     ReviewCreateSerializer,
     PersonListSerializer,
     PersonDetailSerializer,
-    CreateRatingSerializer)
+    CreateRatingSerializer,
+)
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import permissions, generics
-from django.db import models
 
 def get_client_ip(self, request):
     x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
@@ -31,12 +30,6 @@ class LargeResultsSetPagination(PageNumberPagination):
     page_size = 15
     page_size_query_param = 'page_size'
     max_page_size = 15
-
-
-class MoviesView(ListView):
-    """СПИСОК ФИЛЬМОВ"""
-    model = Movie
-    queryset = Movie.objects.filter(draft=False)
 
 
 class AddReview(View):
@@ -62,7 +55,6 @@ class MovieListView(ListAPIView):
     queryset = Movie.objects.filter(draft=False)
     serializer_class = MovieListSerializer
     pagination_class = LargeResultsSetPagination
-    permission_classes = [permissions.IsAuthenticated]
 
     # def get(self, request):
     #     movie = Movie.objects.filter(draft=False).annotate(
@@ -114,3 +106,5 @@ class AddStarRatingView(APIView):
             serializer.save(ip=get_client_ip(request))
             return Response(status=201)
         return Response(status=400)
+
+

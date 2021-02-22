@@ -1,6 +1,7 @@
 from django.db import models
 from datetime import date
 from django.utils.text import slugify
+from django.contrib.auth.models import User
 
 
 class Category(models.Model):
@@ -159,43 +160,6 @@ class MovieShots(models.Model):
     class Meta:
         verbose_name = "Кадр из фильма"
         verbose_name_plural = "Кадры из фильма"
-# class Serial(Movie):
-
-#
-#     def __str__(self):
-#         return self.original_title
-#
-#     class Meta:
-#         verbose_name = "Сериал"
-#         verbose_name_plural = "Сериалы"
-
-
-# class Film(Movie):
-
-#
-#     def __str__(self):
-#         return self.original_title
-#
-#     class Meta:
-#         verbose_name = "Фильмы"
-#         verbose_name_plural = "Фильмы"
-
-
-# class Cartoon(Movie):
-#     budget = models.PositiveSmallIntegerField("Бюджет", default=0,
-#                                               help_text="укажите сумму в долларах")
-#     fees_in_world = models.PositiveIntegerField("Сборы в мире", default=0,
-#                                                 help_text="укажите сумму в долларах")
-#
-#     def __str__(self):
-#         return self.original_title
-#
-#     class Meta:
-#         verbose_name = "Мультфильм"
-#         verbose_name_plural = "Мультфильмы"
-
-
-
 
 
 class RatingStar(models.Model):
@@ -227,7 +191,8 @@ class Rating(models.Model):
 class Reviews(models.Model):
     """ОТЗЫВ"""
     email = models.EmailField()
-    name = models.CharField("Имя", max_length=100)
+    first_name = models.CharField("Фамилия", max_length=25)
+    name = models.CharField("Имя", max_length=25)
     text = models.TextField("Сообщение", max_length=5000)
     parent = models.ForeignKey('self', verbose_name="Родитель",
                                on_delete=models.SET_NULL, blank=True, null=True, related_name="children")
@@ -239,3 +204,20 @@ class Reviews(models.Model):
     class Meta:
         verbose_name = "Отзыв"
         verbose_name_plural = "Отзывы"
+
+class UserProfile(models.Model):
+    user = models.CharField("User Name", max_length=25)
+    password = models.CharField("Пароль", max_length=25)
+    email = models.EmailField("E-mail")
+    reviews = models.ForeignKey(Reviews, verbose_name="Отзывы", on_delete=models.CASCADE, related_name="users_reviews",
+                                blank=True, null=True)
+    rating_star = models.ForeignKey(RatingStar, verbose_name="Рейтинги", on_delete=models.CASCADE, related_name="users_rating",
+                               blank=True, null=True)
+    # description=models.TextField(blank=True,null=True)
+    # location=models.CharField(max_length=30,blank=True)
+    # date_joined=models.DateTimeField(auto_now_add=True)
+    # updated_on=models.DateTimeField(auto_now=True)
+    # is_organizer=models.BooleanField(default=False)
+
+    def __str__(self):
+        return self.user

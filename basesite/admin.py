@@ -87,7 +87,7 @@ class MovieAdmin(admin.ModelAdmin):
 
 @admin.register(Reviews)
 class ReviewAdmin(admin.ModelAdmin):
-    list_display = ("name", "email", "parent", "movie", "id")
+    list_display = ("first_name", "name", "email", "parent", "movie", "id")
     readonly_fields = ("name", "email")
 
 @admin.register(Genre)

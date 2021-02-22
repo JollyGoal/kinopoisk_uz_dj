@@ -1,9 +1,10 @@
 from django import forms
-from .models import Reviews
+from .models import Reviews, UserProfile
+from django.contrib.auth.models import User
 
 
 class ReviewForm(forms.ModelForm):
     """ФОРМА ОТЗЫВОВ"""
     class Meta:
         model = Reviews
-        fields = ("name", "email", "text", "movie")
+        fields = ("first_name", "name", "email", "text", "movie")
