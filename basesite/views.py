@@ -4,6 +4,7 @@ from django.views.generic.base import View
 from rest_framework.generics import ListAPIView
 from rest_framework.pagination import PageNumberPagination
 from .models import Movie, Actor, MovieShots, Reviews
+from customusers.models import Account
 from .forms import ReviewForm
 from .serializers import (
     MovieListSerializer,
@@ -13,6 +14,7 @@ from .serializers import (
     PersonListSerializer,
     PersonDetailSerializer,
     CreateRatingSerializer,
+    AuthorSerializer,
 )
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -97,6 +99,10 @@ class ReviewDelete(generics.DestroyAPIView):
 class ReviewCreateView(LoginRequiredMixin, generics.CreateAPIView):
     """ДОБАВЛЕНИЕ ОТЗЫВА К ФИЛЬМУ"""
     serializer_class = ReviewCreateSerializer
+
+class AuthorView(generics.ListAPIView):
+    queryset = Account.objects.all()
+    serializer_class = AuthorSerializer
 
 
 

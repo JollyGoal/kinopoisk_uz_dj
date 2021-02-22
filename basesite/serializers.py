@@ -1,6 +1,7 @@
 from djoser.conf import User
 from rest_framework import serializers
 from .models import Movie, Genre, VideoTrailer, AgeRate, MovieShots, Reviews, Actor, Rating
+from customusers.models import Account
 from rest_framework import serializers
 
 
@@ -79,6 +80,13 @@ class ReviewCreateSerializer(serializers.ModelSerializer):
         model = Reviews
         fields = "__all__"
 
+class AuthorSerializer(serializers.ModelSerializer):
+    """ДОБАВЛЕНИЕ Автора"""
+
+    class Meta:
+        model = Account
+        fields = ("id", "username", "avatar", "email", )
+
 class ReviewSerializer(serializers.ModelSerializer):
     """ВЫВОД ОТЗЫВА"""
     children = RecursiveSerializer(many=True)
@@ -86,7 +94,7 @@ class ReviewSerializer(serializers.ModelSerializer):
     class Meta:
         list_serializer_class = FilterReviewListSerializer
         model = Reviews
-        fields = ("id", "email", "name", "text", "children")
+        fields = ("id", "author", "text", "children")
 
 class MovieDetailSerializer(serializers.ModelSerializer):
     """ПОЛНЫЙ ФИЛЬМ"""
